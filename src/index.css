@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* @layer components {
+  .container-custom {
+    @apply shadow-md mx-auto mt-10 p-6 border rounded max-w-md;
+  }
+  .container-info {
+    @apply shadow-md mx-auto mt-10 p-6 border border-gray-100 rounded max-w-md;
+  }
+} */
+
+/* Con @utility tenemos autocompletado en los componentes */
+@utility container-custom {
+   @apply shadow-md mx-auto my-6 p-6 border border-gray-200 rounded max-w-md;
+  
+  &:hover {
+    @apply border-gray-50;
+  }
+}
+
+@utility container-info {
+   @apply shadow-md mx-auto my-6 p-6 border border-gray-100 rounded max-w-md text-gray-600 text-xs text-balance;
+}
+
+@utility container-title {
+   @apply  mx-auto my-4 p-2  rounded max-w-md text-gray-600 text-xs text-balance;
+}
+
+@utility input-custom {
+   @apply border border-gray-300 p-1 rounded-sm mx-3 placeholder:text-xs
+}
+
+@utility btn-custom {
+   @apply border border-gray-300 px-3 py-2 rounded-sm mx-3 bg-slate-800 text-gray-50 text-shadow-md text-xs;
+   &:hover{
+    @apply bg-slate-900 transition-colors transition-discrete duration-150 ease-in-out cursor-pointer
+   }
+}
