@@ -1,8 +1,6 @@
-
-
 **`useTransition`** es el hook del **"Segundo Plano"**. 🏃‍♂️💨
 
-Su trabajo es decirle a React: *"Esta actualización de estado es importante, pero NO es urgente. Si el usuario hace clic o escribe algo mientras tanto, atiende al usuario primero e interrumpe esta tarea".*
+Su trabajo es decirle a React: _"Esta actualización de estado es importante, pero NO es urgente. Si el usuario hace clic o escribe algo mientras tanto, atiende al usuario primero e interrumpe esta tarea"._
 
 ---
 
@@ -24,11 +22,10 @@ React pintará la nueva pantalla en memoria, y solo cuando esté lista, la mostr
 
 ```javascript
 const [isPending, startTransition] = useTransition();
-
 ```
 
-* **`isPending`**: `true` mientras la transición está ocurriendo (útil para mostrar un spinner pequeño).
-* **`startTransition`**: La función que envuelve tu actualización de estado "lenta".
+- **`isPending`**: `true` mientras la transición está ocurriendo (útil para mostrar un spinner pequeño).
+- **`startTransition`**: La función que envuelve tu actualización de estado "lenta".
 
 ---
 
@@ -37,11 +34,11 @@ const [isPending, startTransition] = useTransition();
 Vamos a simular una pestaña muy lenta.
 
 ```jsx
-import { useState, useTransition, memo } from 'react';
+import { useState, useTransition, memo } from "react";
 
 export default function App() {
-  const [tab, setTab] = useState('inicio');
-  
+  const [tab, setTab] = useState("inicio");
+
   // EL HOOK MÁGICO
   const [isPending, startTransition] = useTransition();
 
@@ -55,23 +52,23 @@ export default function App() {
   return (
     <div className="p-8">
       <div className="flex gap-4 mb-4 border-b pb-2">
-        <BotonTab 
-          isActive={tab === 'inicio'} 
-          onClick={() => selectTab('inicio')}
+        <BotonTab
+          isActive={tab === "inicio"}
+          onClick={() => selectTab("inicio")}
         >
           Inicio
         </BotonTab>
-        
-        <BotonTab 
-          isActive={tab === 'pesado'} 
-          onClick={() => selectTab('pesado')}
+
+        <BotonTab
+          isActive={tab === "pesado"}
+          onClick={() => selectTab("pesado")}
         >
           Gráficos Pesados {isPending && "⏳"}
         </BotonTab>
-        
-        <BotonTab 
-          isActive={tab === 'contacto'} 
-          onClick={() => selectTab('contacto')}
+
+        <BotonTab
+          isActive={tab === "contacto"}
+          onClick={() => selectTab("contacto")}
         >
           Contacto
         </BotonTab>
@@ -80,9 +77,9 @@ export default function App() {
       {/* Si isPending es true, significa que React está trabajando en el fondo.
           Podemos mostrar la interfaz vieja con opacidad reducida para dar feedback. */}
       <div style={{ opacity: isPending ? 0.5 : 1 }}>
-        {tab === 'inicio' && <Inicio />}
-        {tab === 'pesado' && <ComponentePesado />}
-        {tab === 'contacto' && <Contacto />}
+        {tab === "inicio" && <Inicio />}
+        {tab === "pesado" && <ComponentePesado />}
+        {tab === "contacto" && <Contacto />}
       </div>
     </div>
   );
@@ -91,9 +88,11 @@ export default function App() {
 // Componente simple auxiliar para botones
 function BotonTab({ children, isActive, onClick }) {
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`px-4 py-2 font-bold ${isActive ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+      className={`px-4 py-2 font-bold ${
+        isActive ? "bg-blue-600 text-white" : "bg-gray-200"
+      }`}
     >
       {children}
     </button>
@@ -101,35 +100,41 @@ function BotonTab({ children, isActive, onClick }) {
 }
 
 // Componentes de contenido
-function Inicio() { return <p>Bienvenido a la página rápida.</p>; }
-function Contacto() { return <p>Escríbenos al email.</p>; }
+function Inicio() {
+  return <p>Bienvenido a la página rápida.</p>;
+}
+function Contacto() {
+  return <p>Escríbenos al email.</p>;
+}
 
 // Simulamos lentitud extrema
 const ComponentePesado = memo(() => {
   let items = [];
   for (let i = 0; i < 2000; i++) {
-    items.push(<div key={i} className="inline-block p-1 text-xs border bg-gray-50">Dato {i}</div>);
+    items.push(
+      <div key={i} className="inline-block p-1 text-xs border bg-gray-50">
+        Dato {i}
+      </div>
+    );
   }
   // Retardo artificial para bloquear el hilo principal
   const start = performance.now();
-  while (performance.now() - start < 100) {} 
+  while (performance.now() - start < 100) {}
 
   return <div className="flex flex-wrap gap-1">{items}</div>;
 });
-
 ```
 
 ### 4. ¿Qué sucede aquí?
 
 1. Haces clic en "Gráficos Pesados".
-2. `startTransition` le dice a React: *"Cambia la pestaña a 'pesado', pero tómalo con calma"*.
+2. `startTransition` le dice a React: _"Cambia la pestaña a 'pesado', pero tómalo con calma"_.
 3. `isPending` se vuelve `true` inmediatamente.
 4. React empieza a calcular el componente pesado en el fondo.
 5. **Si haces clic en "Contacto" MIENTRAS carga:**
-* Como es una transición interrumpible, React tira a la basura el trabajo de los gráficos y cambia inmediatamente a Contacto.
-* **¡La app nunca se siente trabada!**
 
-
+- Como es una transición interrumpible, React tira a la basura el trabajo de los gráficos y cambia inmediatamente a Contacto.
+- **¡La app nunca se siente trabada!**
 
 ---
 
@@ -137,10 +142,10 @@ const ComponentePesado = memo(() => {
 
 Ambos usan la misma tecnología interna (Concurrent React), pero se aplican diferente:
 
-| Hook | ¿Cuándo usarlo? | Ejemplo |
-| --- | --- | --- |
-| **`useTransition`** | Cuando **TÚ disparas** la acción (click, submit). Tienes acceso a `setEstado`. | Cambiar de pestaña, navegar a otra página, aplicar un filtro con botón. |
-| **`useDeferredValue`** | Cuando **RECIBES** un dato nuevo (props) y no controlas el setter. | Un componente de búsqueda que recibe `text` del padre, un gráfico que recibe `data` en tiempo real. |
+| Hook                   | ¿Cuándo usarlo?                                                                | Ejemplo                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| **`useTransition`**    | Cuando **TÚ disparas** la acción (click, submit). Tienes acceso a `setEstado`. | Cambiar de pestaña, navegar a otra página, aplicar un filtro con botón.                             |
+| **`useDeferredValue`** | Cuando **RECIBES** un dato nuevo (props) y no controlas el setter.             | Un componente de búsqueda que recibe `text` del padre, un gráfico que recibe `data` en tiempo real. |
 
 ### 6. Novedad React 19: Soporte Async 🌟
 
@@ -156,7 +161,6 @@ const handleSubmit = () => {
     // Y cuando termina, actualiza la UI.
   });
 };
-
 ```
 
 Esto elimina la necesidad de crear un estado manual `isLoading` para muchas interacciones. (Aunque para formularios completos, `useActionState` es mejor).
@@ -167,11 +171,10 @@ Esto elimina la necesidad de crear un estado manual `isLoading` para muchas inte
 
 Tienes el conocimiento de:
 
-* **Gestión de Estado:** `useState`, `useReducer`, `useActionState`.
-* **Efectos:** `useEffect`, `useLayoutEffect`, `useInsertionEffect`.
-* **Refs:** `useRef`, `useImperativeHandle`.
-* **Rendimiento:** `useMemo`, `useCallback`, `useTransition`, `useDeferredValue`.
-* **Contexto:** `useContext`, `use`.
-* **Utilidades:** `useId`, `useDebugValue`, `useSyncExternalStore`.
-* **UX:** `useOptimistic`, `useFormStatus`.
-
+- **Gestión de Estado:** `useState`, `useReducer`, `useActionState`.
+- **Efectos:** `useEffect`, `useLayoutEffect`, `useInsertionEffect`.
+- **Refs:** `useRef`, `useImperativeHandle`.
+- **Rendimiento:** `useMemo`, `useCallback`, `useTransition`, `useDeferredValue`.
+- **Contexto:** `useContext`, `use`.
+- **Utilidades:** `useId`, `useDebugValue`, `useSyncExternalStore`.
+- **UX:** `useOptimistic`, `useFormStatus`.
